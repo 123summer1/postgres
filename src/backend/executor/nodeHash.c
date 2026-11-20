@@ -40,6 +40,7 @@
 #include "port/pg_bitutils.h"
 #include "utils/dynahash.h"
 #include "utils/guc.h"
+#include "utils/halo_pmc.h"
 #include "utils/lsyscache.h"
 #include "utils/memutils.h"
 #include "utils/syscache.h"
@@ -157,12 +158,17 @@ MultiExecPrivateHash(HashState *node)
 	hashkeys = node->hashkeys;
 	econtext = node->ps.ps_ExprContext;
 
+	/* Halo PMC sampling starts */
+	(void) PmcOpen(1);
+	PmcEnable();
+
 	/*
 	 * Get all tuples from the node below the Hash node and insert into the
 	 * hash table (or temp files).
 	 */
 	for (;;)
 	{
+		PmcSampleBegin();
 		slot = ExecProcNode(outerNode);
 		if (TupIsNull(slot))
 			break;
@@ -189,7 +195,15 @@ MultiExecPrivateHash(HashState *node)
 			}
 			hashtable->totalTuples += 1;
 		}
+		PmcSampleEnd();
 	}
+
+	/* Halo PMC sampling ends */
+	PmcDisable();
+	PmcReadData(0);
+	PmcPrint();
+	PmcPrintSample();
+	PmcClose(_PmcData);
 
 	/* resize the hash table if needed (NTUP_PER_BUCKET exceeded) */
 	if (hashtable->nbuckets != hashtable->nbuckets_optimal)

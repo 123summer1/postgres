@@ -98,6 +98,8 @@ extern int	CommitDelay;
 extern int	CommitSiblings;
 extern char *default_tablespace;
 extern char *temp_tablespaces;
+
+extern char *halo_pmc_list;
 extern bool ignore_checksum_failure;
 extern bool ignore_invalid_pages;
 
@@ -3814,6 +3816,17 @@ struct config_real ConfigureNamesReal[] =
 
 struct config_string ConfigureNamesString[] =
 {
+	{
+		{"halo_pmc_list", PGC_USERSET, CUSTOM_OPTIONS,
+			gettext_noop("Sets the CPU PMC counter."),
+			NULL,
+			GUC_NOT_IN_SAMPLE
+		},
+		&halo_pmc_list,
+		"",
+		NULL, NULL, NULL
+	},
+
 	{
 		{"archive_command", PGC_SIGHUP, WAL_ARCHIVING,
 			gettext_noop("Sets the shell command that will be called to archive a WAL file."),
