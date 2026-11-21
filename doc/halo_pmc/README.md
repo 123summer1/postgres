@@ -17,7 +17,9 @@
 SET halo_pmc_list = 'Instructions,cycles,PERF_COUNT_HW_CACHE_L1D_RD,MEM_INST_RETIRED_ALL_STORES';
 ```
 
-计数器名与 `perf_event_attr` 字段的对应关系存放在 `pmc_name` 表中（`pmc_name.sql` 创建）。
+计数器名与 `perf_event_attr` 字段的对应关系存放在 `pmc_name` 表中（`pmc_name.sql` 创建）。表结构与课件附带的《创建PMC表.txt》一致：
+`pmc_name(pcm_name varchar(40), pmutype int, pe_config int, config1 int, config2 int)`，
+`PmcInit` 使用 `SELECT lower(pcm_name), pmutype, ... FROM pmc_name`，因此直接导入课件文件也能工作。
 
 ## 2. 文件说明
 

@@ -130,7 +130,7 @@ PmcInit(void)
 	HTAB	   *hTable;
 	MemoryContext cxt;
 	MemoryContext old_ctx;
-	char	   *sql = "SELECT lower(pmc_name), pmtype, pe_config, config1, config2 FROM pmc_name";
+	char	   *sql = "SELECT lower(pcm_name), pmutype, pe_config, config1, config2 FROM pmc_name";
 	int			i;
 	bool		pushed = false;
 	bool		started = false;
